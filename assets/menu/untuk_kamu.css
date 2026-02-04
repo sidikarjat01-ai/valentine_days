@@ -1,103 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap');
-
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    /* Gradasi yang sama dengan Welcome */
-    background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-    min-height: 100vh;
+    background: #ffdef2; /* Warna dasar pink lembut */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    overflow-x: hidden;
+    min-height: 100vh;
 }
 
 .letter-wrapper {
-    width: 100%;
-    max-width: 450px;
-    z-index: 10;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 30px;
-    padding: 40px 25px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     text-align: center;
 }
 
 .stamp {
-    font-size: 3rem;
+    font-size: 50px;
     margin-bottom: 15px;
-    animation: pulse 1.5s infinite;
 }
 
 h2 {
-    font-family: 'Dancing Script', cursive;
     color: #d63384;
-    font-size: 2rem;
     margin-bottom: 20px;
 }
 
 .letter-content p {
     color: #444;
-    line-height: 1.8;
+    line-height: 1.6;
+    font-size: 15px;
     margin-bottom: 15px;
-    font-size: 0.95rem;
-    text-align: center; /* Diganti center agar lebih estetik di kartu */
+    text-align: left; /* Agar teks rapi ke kiri */
+    min-height: 20px;
 }
 
 .closing {
-    font-family: 'Dancing Script', cursive;
-    font-size: 1.4rem;
-    color: #ff4d6d;
-    margin-top: 25px !important;
+    font-weight: bold;
+    color: #d63384 !important;
+    text-align: center !important;
+    margin-top: 25px;
 }
 
 .btn-back {
     display: inline-block;
-    margin-top: 25px;
+    margin-top: 20px;
     padding: 10px 25px;
-    background: #ff4d6d;
+    background: #d63384;
     color: white;
     text-decoration: none;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    opacity: 0; /* Diatur oleh JS nanti */
-    transition: 0.5s;
-    
-}
-
-/* Kursor Ngetik */
-.typing::after {
-    content: '|';
-    color: #ff4d6d;
-    animation: blink 0.7s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.heart-bg {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1; pointer-events: none;
+    border-radius: 25px;
+    transition: 0.3s;
+    opacity: 0; /* Dikendalikan JS */
 }

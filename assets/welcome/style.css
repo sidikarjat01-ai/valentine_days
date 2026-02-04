@@ -17,9 +17,12 @@ body {
 
 .main-content {
     width: 100%;
-    max-width: 400px; /* Batas lebar kartu */
+    max-width: 400px;
     position: relative;
     z-index: 10;
+    /* Tambahkan ini */
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out; 
 }
 
 .welcome-card {
@@ -51,16 +54,20 @@ h2 { color: #d63384; font-size: 1.5rem; }
 }
 
 .menu-item {
-    flex: 1 1 calc(50% - 10px); /* Ambil 2 kolom */
+    flex: 1 1 calc(50% - 10px);
     background: white;
     padding: 15px 5px;
     border-radius: 15px;
     text-decoration: none;
     color: #ff4d6d;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Perkecil sedikit agar muat di HP kecil */
     transition: 0.3s;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px; /* Tambahkan tinggi minimal agar seragam */
 }
 
 .menu-item.special {

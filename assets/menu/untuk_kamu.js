@@ -1,8 +1,11 @@
-// Fungsi utama yang akan dipanggil oleh script.js utama
+/**
+ * Script Untuk Kamu - Versi Stabil
+ */
+
 function initUntukKamu() {
     console.log("Memulai animasi Untuk Kamu...");
 
-    // 1. Definisikan Data Konten di dalam fungsi
+    // 1. Ambil Nama & Siapkan Data
     const nama = localStorage.getItem('namaUser') || "Sayangku";
     const contentData = {
         title: `${nama}`,
@@ -10,24 +13,29 @@ function initUntukKamu() {
         p2: `Bareng Smnnn, dino-dino ku bahagia yang, Senyum manis e smn selalu berhasil ge aq bahagia. Swn yaa, Swn bgt ws glm nompo ch elek iki.`,
         p3: `Dengan hari bahagia ini hari valentine, aq pgn smn ngerti betapa berhargane smn ge aq, betapa sayang e aq ro smn, betapa wedine aq nk kelangan smn. aq menghargai setiap momen momen bahagia kita momen sedih kita sng pernah kita lewati bareng bareng.`,
         p4: `Trus ro aq yaa, ajarono aq py ben iso dadi wong lanang sng smn impikan. Mugo aq iso truss dadi arek sng slalu ge smn aman yaa, sng slalu ge smn nyaman, sng slalu ge smn bahagia dan di cintai dengan tuluss sak tulus tulus e. Sepuranee yaa gaiso kyok lanangan liyo nde jobo knu, sepuranee yaa nk aq mesti jarak i smn. Smn nesu bukane tak bujuk tpi malah tak jarak, yaa abiss smn nk nesuu lucu eg hehe, maaf yaa...`,
-        p5: `Happy Valentine, ${nama}`,
+        p5: `Happy Valentine, ${nama} 💖`,
     };
 
-    // 2. Bersihkan elemen sebelum mulai
+    // 2. Bersihkan elemen teks sebelum mulai
     const ids = ["typeTitle", "p1", "p2", "p3", "p4", "p5"];
     ids.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = "";
     });
 
-    // 3. Fungsi Pengetik Internal
+    // Sembunyikan tombol kembali dulu
+    const btnBack = document.getElementById("backBtn");
+    if (btnBack) btnBack.style.opacity = "0";
+
+    // 3. Fungsi Pengetik (Hanya Satu & Stabil)
     function typeWriter(text, elementId, speed) {
         return new Promise((resolve) => {
             let i = 0;
-            const element = document.getElementById(elementId);
-            if (!element) return resolve();
-            
             function type() {
+                const element = document.getElementById(elementId);
+                // Berhenti jika elemen hilang (user pindah halaman)
+                if (!element) return resolve();
+
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
@@ -40,87 +48,33 @@ function initUntukKamu() {
         });
     }
 
-    // 4. Jalankan urutan dengan benar
+    // 4. Jalankan Urutan Animasi
     async function startTyping() {
-        await typeWriter(contentData.title, "typeTitle", 70);
-        await typeWriter(contentData.p1, "p1", 50);
-        await typeWriter(contentData.p2, "p2", 50);
-        await typeWriter(contentData.p3, "p3", 50);
-        await typeWriter(contentData.p4, "p4", 50);
-        await typeWriter(contentData.p5, "p5", 80);
-
-        const btn = document.getElementById("backBtn");
-        if (btn) btn.style.opacity = "1";
-    }
-
-    startTyping();
-}
-
-// Panggil fungsi saat script dimuat
-initUntukKamu();
-
-function typeWriter(text, elementId, speed) {
-    return new Promise((resolve) => {
-        let i = 0;
-        const el = document.getElementById(elementId);
-        if (!el) return resolve();
-        function type() {
-            if (i < text.length && document.getElementById(elementId)) {
-                el.innerHTML += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            } else { resolve(); }
-        }
-        type();
-    });
-}
-
-    // Fungsi pengetik dengan proteksi pindah menu
-    function typeWriter(text, elementId, speed) {
-        return new Promise((resolve) => {
-            let i = 0;
-            const element = document.getElementById(elementId);
-            if (!element) return resolve();
-            
-            element.classList.add("typing");
-
-            function type() {
-                // Proteksi: Berhenti jika elemen sudah hilang (user klik Back/menu lain)
-                const currentEl = document.getElementById(elementId);
-                if (!currentEl) return; 
-
-                if (i < text.length) {
-                    currentEl.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                    currentEl.classList.remove("typing");
-                    resolve();
-                }
-            }
-            type();
-        });
-    }
-
-    // Jalankan urutan pengetikan
-    async function startTyping() {
-        // Cek apakah elemen masih ada sebelum ngetik
+        // Cek elemen pertama, jika tidak ada berarti user sudah pindah halaman
         if (!document.getElementById("typeTitle")) return;
-        
-        await typeWriter(content.title, "typeTitle", 70);
-        await typeWriter(content.p1, "p1", 50);
-        await typeWriter(content.p2, "p2", 50);
-        await typeWriter(content.p3, "p3", 50);
-        await typeWriter(content.p4, "p4", 50);
-        await typeWriter(content.p5, "p5", 80);
 
-        const btn = document.getElementById("backBtn");
-        if (btn) btn.style.opacity = "1";
+        try {
+            await typeWriter(contentData.title, "typeTitle", 70);
+            await typeWriter(contentData.p1, "p1", 40);
+            await typeWriter(contentData.p2, "p2", 40);
+            await typeWriter(contentData.p3, "p3", 40);
+            await typeWriter(contentData.p4, "p4", 40);
+            await typeWriter(contentData.p5, "p5", 80);
+
+            // Tampilkan tombol kembali setelah selesai
+            if (btnBack) {
+                btnBack.style.transition = "opacity 1s ease";
+                btnBack.style.opacity = "1";
+            }
+        } catch (e) {
+            console.log("Animasi berhenti karena pindah halaman.");
+        }
     }
 
     startTyping();
+}
 
-// Jalankan otomatis jika dibuka lewat link langsung (bukan fetch)
+// 5. Jalankan Fungsi
 if (document.readyState === "complete" || document.readyState === "interactive") {
     initUntukKamu();
 } else {
