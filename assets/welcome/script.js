@@ -72,15 +72,15 @@ async function bukaMenu(url) {
 
     try {
         const response = await fetch('./' + url); 
+        if (!response.ok) throw new Error("File tidak ditemukan");
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Cari elemen konten utama
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // --- 1. PAKSA CSS MASUK ---
+            // --- 1. PAKSA CSS MASUK (Agar Bunga & Untuk Kamu muncul stylenya) ---
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
@@ -93,29 +93,35 @@ async function bukaMenu(url) {
             });
 
             setTimeout(() => {
-                // --- 2. GANTI KONTEN & PAKSA OPACITY 1 ---
+                // --- 2. GANTI KONTEN ---
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
-                mainContent.style.opacity = '1';
+                mainContent.style.opacity = '1'; // Munculkan kembali
 
-                // --- 3. PAKSA SCRIPT MENYALA (PENTING!) ---
-                // Browser tidak akan menjalankan <script> hasil fetch secara otomatis
+                // --- 3. PAKSA SCRIPT MENYALA (Agar Gallery bisa slide & Typing jalan) ---
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
                     const newScript = document.createElement("script");
                     if (oldScript.src) {
-                        newScript.src = oldScript.src; // Jalankan file .js luar
+                        newScript.src = oldScript.src;
                     } else {
-                        newScript.textContent = oldScript.textContent; // Jalankan kodingan js dalam
+                        newScript.textContent = oldScript.textContent;
                     }
                     document.body.appendChild(newScript);
                 });
 
-                // --- 4. TRICK KHUSUS BUNGA/GALLERY ---
-                if (url.includes('bunga') && typeof initBunga === 'function') initBunga();
-                if (url.includes('gallery') && typeof initGallery === 'function') initGallery();
+                // --- 4. PEMICU KHUSUS (Trigger manual) ---
+                if (url.includes('gallery')) {
+                    if (typeof initGallery === 'function') initGallery();
+                }
+                if (url.includes('untuk_kamu')) {
+                    if (typeof startTyping === 'function') startTyping();
+                }
+                if (url.includes('bunga')) {
+                    if (typeof initBunga === 'function') initBunga();
+                }
                 
-                bindBackButtons();
+                bindBackButtons(); //
             }, 300);
         }
     } catch (error) {
