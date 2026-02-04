@@ -98,21 +98,9 @@ async function bukaMenu(url) {
                 if (url.includes('gallery')) typeof initGallery === 'function' && initGallery();
                 if (url.includes('harapanku')) typeof initHarapanku === 'function' && initHarapanku();
                 if (url.includes('reasons')) typeof initReasons === 'function' && initReasons();
-                
-                // KHUSUS BUNGA: Pastikan fungsi inisialisasi bunga dipanggil
-                if (url.includes('bunga')) {
-                    if (typeof initBunga === 'function') {
-                        initBunga();
-                    } else {
-                        // Jika script bunganya ada di file bunga.html, kita harus muat manual
-                        const flowerScript = doc.querySelector('script[src*="bunga"]');
-                        if (flowerScript) {
-                            const s = document.createElement('script');
-                            s.src = flowerScript.src;
-                            document.body.appendChild(s);
-                        }
-                    }
-                }
+                if (url.includes('untuk_kamu')) typeof initReasons === 'function' && initUntuk_kamu();
+				if (url.includes('bunga')) typeof initReasons === 'function' && initBunga();
+                // KHUSUS BUNGA: Pastikan fungsi inisialisasi bunga dipanggil\
                 
                 bindBackButtons();
             }, 300);
