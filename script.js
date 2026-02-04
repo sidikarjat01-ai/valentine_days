@@ -64,15 +64,16 @@ function playConsistentMusic() {
     }, 1000);
 }
 
+// Gunakan var agar tidak error saat script dipanggil berulang kali di GitHub
+var globalAudioElement = document.getElementById("globalAudio") || document.getElementById("mySong");
+
 async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
     if (!mainContent) return;
     
-    // 1. Animasi keluar
     mainContent.style.opacity = '0';
 
     try {
-        // Ambil file dari server (GitHub)
         const response = await fetch('./' + url); 
         if (!response.ok) throw new Error("Gagal mengambil file: " + url);
         
@@ -82,73 +83,58 @@ async function bukaMenu(url) {
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // 2. Tarik CSS agar style Bunga/Gallery/Untuk Kamu muncul
+            // 1. Tarik CSS (Agar Bunga & Untuk Kamu muncul stylenya)
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
                 if (!document.querySelector(`link[href="${href}"]`)) {
                     const nl = document.createElement('link');
-                    nl.rel = 'stylesheet'; 
-                    nl.href = href;
+                    nl.rel = 'stylesheet'; nl.href = href;
                     document.head.appendChild(nl);
                 }
             });
 
             setTimeout(() => {
-                // 3. Pasang HTML dan kembalikan Opacity ke 1
+                // 2. Ganti Konten & Paksa Opacity 1 (Solusi Capture.PNG)
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
                 mainContent.style.opacity = '1';
+                mainContent.style.visibility = 'visible';
 
-                // 4. Paksa Script Menyala (PENTING!)
+                // 3. Eksekusi Script Baru tanpa menduplikasi script lama
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
-                    const newScript = document.createElement("script");
                     if (oldScript.src) {
-                        // Jika script luar, kita pasang src-nya
-                        newScript.src = oldScript.src;
+                        // Jangan load ulang script utama agar tidak tabrakan variabel
+                        if (!oldScript.src.includes('script.js') && !oldScript.src.includes('musik.js')) {
+                            const newScript = document.createElement("script");
+                            newScript.src = oldScript.src;
+                            document.body.appendChild(newScript);
+                        }
                     } else {
-                        // Jika script dalam (inline), kita pasang isinya
+                        const newScript = document.createElement("script");
                         newScript.textContent = oldScript.textContent;
+                        document.body.appendChild(newScript);
                     }
-                    document.body.appendChild(newScript);
                 });
 
-                // 5. JEDA EKSTRA (100ms) untuk memastikan elemen sudah nempel di layar
+                // 4. Jalankan Fungsi setelah jeda render
                 setTimeout(() => {
-                    console.log("Mencoba menjalankan fungsi untuk: " + url);
-                    
                     if (url.includes('untuk_kamu')) {
-                        if (typeof initUntukKamu === 'function') {
-                            initUntukKamu();
-                        } else {
-                            console.error("Fungsi initUntukKamu belum terbaca. Cek jalur file JS-nya!");
-                        }
+                        if (typeof initUntukKamu === 'function') initUntukKamu();
                     }
-                    
                     if (url.includes('gallery')) {
                         if (typeof initGallery === 'function') initGallery();
                     }
-                    
                     if (url.includes('bunga')) {
                         if (typeof initBunga === 'function') initBunga();
                     }
-                }, 100); 
-
-                // 6. Pasang ulang tombol kembali
-                const btn = document.getElementById("backBtn") || document.querySelector('.btn-back');
-                if(btn) {
-                    btn.onclick = (e) => { 
-                        e.preventDefault(); 
-                        // Jika ingin kembali ke tampilan awal tanpa mati musik:
-                        location.href = "welcome.html"; 
-                    };
-                }
+                }, 200);
 
             }, 300);
         }
     } catch (e) { 
-        console.error("Error saat buka menu:", e); 
+        console.error("Error:", e); 
         mainContent.style.opacity = '1'; 
     }
 }
