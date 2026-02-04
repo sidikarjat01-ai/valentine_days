@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #ffafbd; /* Warna cadangan */
+    background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 400px; /* Batas lebar kartu */
+    position: relative;
+    z-index: 10;
+}
+
+.welcome-card {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 30px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.heart-pulse {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+h2 { color: #d63384; font-size: 1.5rem; }
+.name-tag { color: #444; margin-bottom: 5px; }
+.sub-text { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+
+/* MENU BOX */
+.menu-grid {
+    display: flex;
+    flex-wrap: wrap; /* Ini rahasia responsif: kalau sempit otomatis turun */
+    gap: 10px;
+}
+
+.menu-item {
+    flex: 1 1 calc(50% - 10px); /* Ambil 2 kolom */
+    background: white;
+    padding: 15px 5px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #ff4d6d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.menu-item.special {
+    flex: 1 1 100%; /* Menu bunga ambil full lebar */
+    background: #ffe5ec;
+}
+
+.menu-item:active {
+    transform: scale(0.95);
+}
+
+.btn-logout {
+    display: inline-block;
+    margin-top: 25px;
+    color: #888;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+/* --- Animasi --- */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.heart-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1; pointer-events: none;
+}

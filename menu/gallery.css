@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@600&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+.gallery-wrapper {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    padding: 30px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #d63384;
+    margin-bottom: 25px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5rem;
+}
+
+.frame-container {
+    perspective: 1000px;
+    margin-bottom: 20px;
+}
+
+.polaroid-frame {
+    background: white;
+    padding: 15px 15px 40px 15px;
+    border-radius: 5px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transform: rotate(-2deg);
+    transition: 0.5s ease;
+}
+
+.polaroid-frame:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+#slider {
+    width: 100%;
+    height: 300px;
+    object-fit: cover; /* Agar foto tidak gepeng */
+    border: 1px solid #eee;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.frame-caption {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 15px;
+}
+
+.slide-info {
+    font-size: 0.75rem;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 8px 25px;
+    background: #ff4d6d;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.btn-back:hover {
+    background: #d63384;
+    transform: scale(1.05);
+}
+
+.heart-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1; pointer-events: none;
+}
+
+/* Efek Fade Transisi */
+.fade-out { opacity: 0; }
