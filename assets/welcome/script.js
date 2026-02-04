@@ -66,8 +66,6 @@ function playConsistentMusic() {
 
 async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
-    
-    // 1. Set opacity ke 0 (animasi keluar)
     mainContent.style.opacity = '0';
 
     try {
@@ -76,28 +74,52 @@ async function bukaMenu(url) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Cari elemen main di file yang baru di-fetch
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // Beri jeda sedikit agar transisinya terasa
+            // --- TRICK AGAR STYLE MUNCUL ---
+            // Ambil semua link CSS dari file yang di-fetch dan pasang ke halaman sekarang
+            const links = doc.querySelectorAll('link[rel="stylesheet"]');
+            links.forEach(link => {
+                if (!document.querySelector(`link[href="${link.getAttribute('href')}"]`)) {
+                    const newLink = document.createElement('link');
+                    newLink.rel = 'stylesheet';
+                    newLink.href = link.getAttribute('href');
+                    document.head.appendChild(newLink);
+                }
+            });
+
             setTimeout(() => {
-                // 2. Ganti konten dan class
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
-                
-                // 3. PAKSA OPACITY KE 1 (Ini yang krusial!)
                 mainContent.style.opacity = '1';
 
-                // Jalankan script khusus menu jika ada
+                // --- INISIALISASI MENU ---
                 if (url.includes('gallery')) typeof initGallery === 'function' && initGallery();
                 if (url.includes('harapanku')) typeof initHarapanku === 'function' && initHarapanku();
-                // ... dst
+                if (url.includes('reasons')) typeof initReasons === 'function' && initReasons();
+                
+                // KHUSUS BUNGA: Pastikan fungsi inisialisasi bunga dipanggil
+                if (url.includes('bunga')) {
+                    if (typeof initBunga === 'function') {
+                        initBunga();
+                    } else {
+                        // Jika script bunganya ada di file bunga.html, kita harus muat manual
+                        const flowerScript = doc.querySelector('script[src*="bunga"]');
+                        if (flowerScript) {
+                            const s = document.createElement('script');
+                            s.src = flowerScript.src;
+                            document.body.appendChild(s);
+                        }
+                    }
+                }
+                
+                bindBackButtons();
             }, 300);
         }
     } catch (error) {
         console.error("Gagal load menu:", error);
-        mainContent.style.opacity = '1'; // Tetap munculkan meski error
+        mainContent.style.opacity = '1';
     }
 }
 
@@ -107,8 +129,10 @@ function bindBackButtons() {
     if (backBtn) {
         backBtn.onclick = function(e) {
             e.preventDefault();
-            // Alih-alih pindah halaman, kita muat ulang isi welcome
-            location.reload(); // Kalau reload musik mati, mending arahkan ke fungsi reset konten
+            // Jika ingin benar-benar mulus tanpa mati musik, 
+            // sebaiknya panggil fungsi untuk load konten welcome kembali.
+            // Tapi untuk sekarang, window.location boleh jika music-persistent sudah aktif.
+            window.location.href = "welcome.html"; 
         };
     }
 }
