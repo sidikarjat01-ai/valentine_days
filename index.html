@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You My Lovee</title>
+    <link rel="stylesheet" href="assets/login/style.css">
+</head>
+<body>
+    <div class="heart-bg"></div>
+    <div class="login-container">
+        <div class="card">
+            <div class="heart-icon">❤️</div>
+            <h2>Masukin Tanggal Jadian Kita</h2>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <input 
+                        type="password" 
+                        id="passwordInput"
+                        placeholder="DD/MM/YYYY" 
+                        required>
+                </div>
+                <button type="submit" class="btn-love">Masuk ke Hatiku</button>
+            </form>
+
+            <p id="errorMsg" class="error-msg" style="display: none; color: red; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Di dalam script login kamu
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('passwordInput').value.trim();
+    
+    if (input === "07102025") {
+        // --- MEMBUAT SESSION ---
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('namaUser', 'Putri Nayla Az-zahra Sayanggg ❤️❤️');
+        
+        window.location.href = "welcome.html";
+    } else {
+        alert("Lohh kok lalii yanggg😢");
+    }
+});
+    </script>
+    <script src="assets/login/script.js"></script>
+</body>
+</html>

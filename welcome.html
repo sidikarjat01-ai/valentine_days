@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="assets/welcome/style.css">
+</head>
+<style>
+
+.main-content {
+    will-change: opacity;
+    transition: opacity 0.5s ease-in-out;
+}
+
+</style>
+<body>
+
+    <div class="heart-bg"></div>
+
+    <main class="main-content">
+        <div class="welcome-card">
+            <div class="header">
+                <div class="heart-pulse">❤️</div>
+                <h2>Welcomee Sayanggg</h2>
+                <p class="name-tag">Halo, <b id="displayNama">User</b></p>
+                <p class="sub-text">Pilihh Menuu nyaa Duluu Yaa Sayanggg❤️</p>
+            </div>
+
+            <div class="menu-grid">
+                <a href="javascript:void(0)" onclick="bukaMenu('untuk_kamu.html')" class="menu-item">📁 Ge Smn</a>
+                <a href="javascript:void(0)" onclick="bukaMenu('gallery.html')" class="menu-item">📸 Gallery Kita</a>
+                <a href="javascript:void(0)" onclick="bukaMenu('reasons.html')" class="menu-item">📝 Reasons I Love You</a>
+                <a href="javascript:void(0)" onclick="bukaMenu('harapanku.html')" class="menu-item">💌 Harapanku</a>
+                <a href="javascript:void(0)" onclick="bukaMenu('bunga.html')" class="menu-item special">🌹 Bunga Untukmu</a>
+            </div>
+
+            <div class="footer">
+                <a href="index.html" onclick="logout()" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </main>
+
+<script>
+        // 1. Cek Session paling pertama sebelum aset lain dimuat
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = "index.html";
+        }
+
+        // 2. Fungsi Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <script src="assets/welcome/script.js"></script>
+    <script src="assets/js/musik.js"></script>
+
+    <script>
+        // 4. Inisialisasi Nama (setelah script.js dimuat)
+        window.addEventListener("DOMContentLoaded", () => {
+            const nama = localStorage.getItem('namaUser');
+            if (document.getElementById('displayNama')) {
+                document.getElementById('displayNama').textContent = nama || "Sayangku";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memories</title>
+    <link rel="stylesheet" href="assets/menu/gallery.css">
+</head>
+<body>
+    <script>
+        // Proteksi Session Langsung
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = "index.html";
+        }
+    </script>
+    <div class="heart-bg"></div>
+    <main class="gallery-wrapper">
+        <div class="glass-card">
+            <h2>Gallery 📷</h2>
+            <div class="frame-container">
+                <div class="polaroid-frame">
+                    <img id="slider" src="assets/images/WhatsApp Image 2026-01-29 at 13.56.59.jpeg" alt="Gallery">
+                    <div class="frame-caption">Our Beautiful Moments ✨</div>
+                </div>
+            </div>
+            <div class="controls">
+                <a href="welcome.html" class="btn-back"> Kembali</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Array gambar dipindah ke sini agar bisa dibaca oleh gallery.js
+        window.galleryImages = [
+            "assets/images/WhatsApp Image 2026-01-29 at 13.56.59.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.00.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.01.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.02.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.03.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.04.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.05.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.06.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.07.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.27.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.28.jpeg",
+            "assets/images/WhatsApp Image 2026-01-29 at 13.57.26.jpeg"
+        ];
+    </script>
+    <script src="assets/welcome/script.js"></script>
+    <script src="assets/menu/gallery.js"></script>
+    <script src="assets/js/musik.js"></script>
+</body>
+</html>
