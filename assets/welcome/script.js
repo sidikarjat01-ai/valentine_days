@@ -68,37 +68,33 @@ async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
     if (!mainContent) return;
     
-    mainContent.style.opacity = '0'; // Animasi keluar
+    mainContent.style.opacity = '0';
 
     try {
         const response = await fetch('./' + url); 
-        if (!response.ok) throw new Error("File tidak ditemukan");
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // --- 1. PAKSA CSS MASUK (Agar Bunga & Untuk Kamu muncul stylenya) ---
+            // 1. Tarik CSS agar style Bunga/Gallery muncul
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
                 if (!document.querySelector(`link[href="${href}"]`)) {
-                    const newLink = document.createElement('link');
-                    newLink.rel = 'stylesheet';
-                    newLink.href = href;
-                    document.head.appendChild(newLink);
+                    const nl = document.createElement('link');
+                    nl.rel = 'stylesheet'; nl.href = href;
+                    document.head.appendChild(nl);
                 }
             });
 
             setTimeout(() => {
-                // --- 2. GANTI KONTEN ---
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
-                mainContent.style.opacity = '1'; // Munculkan kembali
+                mainContent.style.opacity = '1';
 
-                // --- 3. PAKSA SCRIPT MENYALA (Agar Gallery bisa slide & Typing jalan) ---
+                // 2. Paksa Script Menyala (PENTING untuk Gallery & Bunga)
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
                     const newScript = document.createElement("script");
@@ -110,24 +106,23 @@ async function bukaMenu(url) {
                     document.body.appendChild(newScript);
                 });
 
-                // --- 4. PEMICU KHUSUS (Trigger manual) ---
+                // 3. Jalankan Fungsi Sesuai Nama di File JS masing-masing
+                if (url.includes('untuk_kamu')) initUntukKamu();
+                
                 if (url.includes('gallery')) {
                     if (typeof initGallery === 'function') initGallery();
-                }
-                if (url.includes('untuk_kamu')) {
-                    if (typeof startTyping === 'function') startTyping();
                 }
                 if (url.includes('bunga')) {
                     if (typeof initBunga === 'function') initBunga();
                 }
                 
-                bindBackButtons(); //
+                // Pasang ulang tombol kembali agar tidak mati musik
+                const btn = document.getElementById("backBtn");
+                if(btn) btn.onclick = (e) => { e.preventDefault(); location.reload(); };
+
             }, 300);
         }
-    } catch (error) {
-        console.error("Bug:", error);
-        mainContent.style.opacity = '1';
-    }
+    } catch (e) { console.error(e); mainContent.style.opacity = '1'; }
 }
 
 // Fungsi supaya tombol "Kembali" juga tidak mematikan musik

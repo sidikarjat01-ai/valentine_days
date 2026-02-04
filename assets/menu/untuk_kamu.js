@@ -1,8 +1,11 @@
+// Fungsi utama yang akan dipanggil oleh script.js utama
 function initUntukKamu() {
+    console.log("Memulai animasi Untuk Kamu...");
+    
     const letterEl = document.getElementById("letterData");
     if (!letterEl) return;
 
-    // Ambil nama dari localStorage (Session JS kita) agar lebih konsisten
+    // Ambil nama dari localStorage agar konsisten
     const nama = localStorage.getItem('namaUser') || "Sayangku";
 
     const content = {
@@ -14,14 +17,14 @@ function initUntukKamu() {
         p5: `Happy Valentine, ${nama}`,
     };
 
-    // Reset isi elemen sebelum mulai mengetik (penting jika dibuka berulang kali)
-    ["typeTitle", "p1", "p2", "p3", "p4", "p5"].forEach(id => {
+    // Reset isi elemen sebelum mulai mengetik (PENTING!)
+    const targetIds = ["typeTitle", "p1", "p2", "p3", "p4", "p5"];
+    targetIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = "";
     });
 
-	
-
+    // Fungsi pengetik dengan proteksi pindah menu
     function typeWriter(text, elementId, speed) {
         return new Promise((resolve) => {
             let i = 0;
@@ -31,15 +34,16 @@ function initUntukKamu() {
             element.classList.add("typing");
 
             function type() {
-                // Cek apakah elemen masih ada di layar (mencegah error jika user klik 'back' saat ngetik)
-                if (!document.getElementById(elementId)) return;
+                // Proteksi: Berhenti jika elemen sudah hilang (user klik Back/menu lain)
+                const currentEl = document.getElementById(elementId);
+                if (!currentEl) return; 
 
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    currentEl.innerHTML += text.charAt(i);
                     i++;
                     setTimeout(type, speed);
                 } else {
-                    element.classList.remove("typing");
+                    currentEl.classList.remove("typing");
                     resolve();
                 }
             }
@@ -47,7 +51,11 @@ function initUntukKamu() {
         });
     }
 
+    // Jalankan urutan pengetikan
     async function startTyping() {
+        // Cek apakah elemen masih ada sebelum ngetik
+        if (!document.getElementById("typeTitle")) return;
+        
         await typeWriter(content.title, "typeTitle", 70);
         await typeWriter(content.p1, "p1", 50);
         await typeWriter(content.p2, "p2", 50);
@@ -62,7 +70,7 @@ function initUntukKamu() {
     startTyping();
 }
 
-// Jalankan jika dibuka langsung
+// Jalankan otomatis jika dibuka lewat link langsung (bukan fetch)
 if (document.readyState === "complete" || document.readyState === "interactive") {
     initUntukKamu();
 } else {
