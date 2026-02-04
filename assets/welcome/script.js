@@ -42,12 +42,12 @@ function createHeart() {
 setInterval(createHeart, 400);
 
 // --- 3. LOGIKA MUSIK KONSISTEN ---
-const audio = document.getElementById("mySong");
+// MENGGUNAKAN 'var' agar tidak error "Identifier has already been declared"
+var audio = document.getElementById("mySong") || document.getElementById("globalAudio");
 
 function playConsistentMusic() {
     if (!audio) return;
 
-    // Ambil waktu terakhir musik diputar dari session
     const savedTime = localStorage.getItem("musicTime");
     if (savedTime) {
         audio.currentTime = parseFloat(savedTime);
@@ -58,15 +58,14 @@ function playConsistentMusic() {
         document.addEventListener('click', () => audio.play(), { once: true });
     });
 
-    // Simpan posisi musik setiap detik agar saat pindah menu tetap nyambung
     setInterval(() => {
-        localStorage.setItem("musicTime", audio.currentTime);
+        if (!audio.paused) {
+            localStorage.setItem("musicTime", audio.currentTime);
+        }
     }, 1000);
 }
 
-// Gunakan var agar tidak error saat script dipanggil berulang kali di GitHub
-var globalAudioElement = document.getElementById("globalAudio") || document.getElementById("mySong");
-
+// --- 4. LOGIKA BUKA MENU (SPA) ---
 async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
     if (!mainContent) return;
@@ -83,7 +82,7 @@ async function bukaMenu(url) {
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // 1. Tarik CSS (Agar Bunga & Untuk Kamu muncul stylenya)
+            // Tarik CSS agar style menu muncul
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
@@ -95,42 +94,37 @@ async function bukaMenu(url) {
             });
 
             setTimeout(() => {
-                // 2. Ganti Konten & Paksa Opacity 1 (Solusi Capture.PNG)
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
+                
+                // PAKSA OPACITY 1 agar konten tidak transparan
                 mainContent.style.opacity = '1';
                 mainContent.style.visibility = 'visible';
 
-                // 3. Eksekusi Script Baru tanpa menduplikasi script lama
+                // Eksekusi Script Baru tanpa duplikasi script utama/musik
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
+                    const newScript = document.createElement("script");
                     if (oldScript.src) {
-                        // Jangan load ulang script utama agar tidak tabrakan variabel
+                        // Filter agar script utama tidak diload ulang (penyebab tabrakan variabel)
                         if (!oldScript.src.includes('script.js') && !oldScript.src.includes('musik.js')) {
-                            const newScript = document.createElement("script");
                             newScript.src = oldScript.src;
                             document.body.appendChild(newScript);
                         }
                     } else {
-                        const newScript = document.createElement("script");
                         newScript.textContent = oldScript.textContent;
                         document.body.appendChild(newScript);
                     }
                 });
 
-                // 4. Jalankan Fungsi setelah jeda render
+                // Jeda 200ms agar fungsi init terbaca setelah script masuk
                 setTimeout(() => {
-                    if (url.includes('untuk_kamu')) {
-                        if (typeof initUntukKamu === 'function') initUntukKamu();
-                    }
-                    if (url.includes('gallery')) {
-                        if (typeof initGallery === 'function') initGallery();
-                    }
-                    if (url.includes('bunga')) {
-                        if (typeof initBunga === 'function') initBunga();
-                    }
+                    if (url.includes('untuk_kamu') && typeof initUntukKamu === 'function') initUntukKamu();
+                    if (url.includes('gallery') && typeof initGallery === 'function') initGallery();
+                    if (url.includes('bunga') && typeof initBunga === 'function') initBunga();
                 }, 200);
 
+                bindBackButtons();
             }, 300);
         }
     } catch (e) { 
@@ -139,20 +133,15 @@ async function bukaMenu(url) {
     }
 }
 
-// Fungsi supaya tombol "Kembali" juga tidak mematikan musik
 function bindBackButtons() {
     const backBtn = document.querySelector('.btn-back');
     if (backBtn) {
         backBtn.onclick = function(e) {
             e.preventDefault();
-            // Jika ingin benar-benar mulus tanpa mati musik, 
-            // sebaiknya panggil fungsi untuk load konten welcome kembali.
-            // Tapi untuk sekarang, window.location boleh jika music-persistent sudah aktif.
             window.location.href = "welcome.html"; 
         };
     }
 }
-
 
 // --- 5. LOGOUT ---
 function logout() {
@@ -160,10 +149,10 @@ function logout() {
     window.location.href = "index.html";
 }
 
-// Jalankan musik saat halaman load
+// Inisialisasi Musik
 window.addEventListener("load", playConsistentMusic);
 
-// Tampilkan nama user dari session
+// Tampilkan Nama User
 window.addEventListener("DOMContentLoaded", () => {
     const namaDisplay = document.getElementById('displayNama');
     if (namaDisplay) {
