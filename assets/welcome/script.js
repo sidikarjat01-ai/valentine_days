@@ -66,47 +66,60 @@ function playConsistentMusic() {
 
 async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
-    mainContent.style.opacity = '0';
+    if (!mainContent) return;
+    
+    mainContent.style.opacity = '0'; // Animasi keluar
 
     try {
-        const response = await fetch(url);
+        const response = await fetch('./' + url); 
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
+        // Cari elemen konten utama
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // --- TRICK AGAR STYLE MUNCUL ---
-            // Ambil semua link CSS dari file yang di-fetch dan pasang ke halaman sekarang
+            // --- 1. PAKSA CSS MASUK ---
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
-                if (!document.querySelector(`link[href="${link.getAttribute('href')}"]`)) {
+                const href = link.getAttribute('href');
+                if (!document.querySelector(`link[href="${href}"]`)) {
                     const newLink = document.createElement('link');
                     newLink.rel = 'stylesheet';
-                    newLink.href = link.getAttribute('href');
+                    newLink.href = href;
                     document.head.appendChild(newLink);
                 }
             });
 
             setTimeout(() => {
+                // --- 2. GANTI KONTEN & PAKSA OPACITY 1 ---
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
                 mainContent.style.opacity = '1';
 
-                // --- INISIALISASI MENU ---
-                if (url.includes('gallery')) typeof initGallery === 'function' && initGallery();
-                if (url.includes('harapanku')) typeof initHarapanku === 'function' && initHarapanku();
-                if (url.includes('reasons')) typeof initReasons === 'function' && initReasons();
-                if (url.includes('untuk_kamu')) typeof initReasons === 'function' && initUntuk_kamu();
-				if (url.includes('bunga')) typeof initReasons === 'function' && initBunga();
-                // KHUSUS BUNGA: Pastikan fungsi inisialisasi bunga dipanggil\
+                // --- 3. PAKSA SCRIPT MENYALA (PENTING!) ---
+                // Browser tidak akan menjalankan <script> hasil fetch secara otomatis
+                const scripts = doc.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src; // Jalankan file .js luar
+                    } else {
+                        newScript.textContent = oldScript.textContent; // Jalankan kodingan js dalam
+                    }
+                    document.body.appendChild(newScript);
+                });
+
+                // --- 4. TRICK KHUSUS BUNGA/GALLERY ---
+                if (url.includes('bunga') && typeof initBunga === 'function') initBunga();
+                if (url.includes('gallery') && typeof initGallery === 'function') initGallery();
                 
                 bindBackButtons();
             }, 300);
         }
     } catch (error) {
-        console.error("Gagal load menu:", error);
+        console.error("Bug:", error);
         mainContent.style.opacity = '1';
     }
 }
