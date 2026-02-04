@@ -64,6 +64,9 @@ function playConsistentMusic() {
     }, 1000);
 }
 
+// Gunakan var agar tidak error saat script dipanggil berulang kali di GitHub
+var globalAudioElement = document.getElementById("globalAudio") || document.getElementById("mySong");
+
 async function bukaMenu(url) {
     const mainContent = document.querySelector('main');
     if (!mainContent) return;
@@ -72,13 +75,15 @@ async function bukaMenu(url) {
 
     try {
         const response = await fetch('./' + url); 
+        if (!response.ok) throw new Error("Gagal mengambil file: " + url);
+        
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // 1. Tarik CSS agar style Bunga/Gallery muncul
+            // 1. Tarik CSS (Agar Bunga & Untuk Kamu muncul stylenya)
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
@@ -90,39 +95,48 @@ async function bukaMenu(url) {
             });
 
             setTimeout(() => {
+                // 2. Ganti Konten & Paksa Opacity 1 (Solusi Capture.PNG)
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
                 mainContent.style.opacity = '1';
+                mainContent.style.visibility = 'visible';
 
-                // 2. Paksa Script Menyala (PENTING untuk Gallery & Bunga)
+                // 3. Eksekusi Script Baru tanpa menduplikasi script lama
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
-                    const newScript = document.createElement("script");
                     if (oldScript.src) {
-                        newScript.src = oldScript.src;
+                        // Jangan load ulang script utama agar tidak tabrakan variabel
+                        if (!oldScript.src.includes('script.js') && !oldScript.src.includes('musik.js')) {
+                            const newScript = document.createElement("script");
+                            newScript.src = oldScript.src;
+                            document.body.appendChild(newScript);
+                        }
                     } else {
+                        const newScript = document.createElement("script");
                         newScript.textContent = oldScript.textContent;
+                        document.body.appendChild(newScript);
                     }
-                    document.body.appendChild(newScript);
                 });
 
-                // 3. Jalankan Fungsi Sesuai Nama di File JS masing-masing
-                if (url.includes('untuk_kamu')) initUntukKamu();
-                
-                if (url.includes('gallery')) {
-                    if (typeof initGallery === 'function') initGallery();
-                }
-                if (url.includes('bunga')) {
-                    if (typeof initBunga === 'function') initBunga();
-                }
-                
-                // Pasang ulang tombol kembali agar tidak mati musik
-                const btn = document.getElementById("backBtn");
-                if(btn) btn.onclick = (e) => { e.preventDefault(); location.reload(); };
+                // 4. Jalankan Fungsi setelah jeda render
+                setTimeout(() => {
+                    if (url.includes('untuk_kamu')) {
+                        if (typeof initUntukKamu === 'function') initUntukKamu();
+                    }
+                    if (url.includes('gallery')) {
+                        if (typeof initGallery === 'function') initGallery();
+                    }
+                    if (url.includes('bunga')) {
+                        if (typeof initBunga === 'function') initBunga();
+                    }
+                }, 200);
 
             }, 300);
         }
-    } catch (e) { console.error(e); mainContent.style.opacity = '1'; }
+    } catch (e) { 
+        console.error("Error:", e); 
+        mainContent.style.opacity = '1'; 
+    }
 }
 
 // Fungsi supaya tombol "Kembali" juga tidak mematikan musik
