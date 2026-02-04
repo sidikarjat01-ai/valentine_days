@@ -92,7 +92,6 @@ function typeWriter(text, elementId, speed) {
     }
 
     startTyping();
-}
 
 // Jalankan otomatis jika dibuka lewat link langsung (bukan fetch)
 if (document.readyState === "complete" || document.readyState === "interactive") {
