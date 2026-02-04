@@ -65,42 +65,39 @@ function playConsistentMusic() {
 }
 
 async function bukaMenu(url) {
-    const mainContent = document.querySelector('.main-content');
+    const mainContent = document.querySelector('main');
     
-    // 1. Efek Fade Out konten (Musik tetap aman karena di luar main-content)
+    // 1. Set opacity ke 0 (animasi keluar)
     mainContent.style.opacity = '0';
 
     try {
         const response = await fetch(url);
-        const text = await response.text();
+        const html = await response.text();
         const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
+        const doc = parser.parseFromString(html, 'text/html');
         
-        // Ambil isi <main> dari file tujuan
+        // Cari elemen main di file yang baru di-fetch
         const newContent = doc.querySelector('main');
 
         if (newContent) {
+            // Beri jeda sedikit agar transisinya terasa
             setTimeout(() => {
-                // 2. Ganti isi kontennya saja
+                // 2. Ganti konten dan class
                 mainContent.innerHTML = newContent.innerHTML;
                 mainContent.className = newContent.className;
                 
-                // 3. Jalankan JS menu tersebut secara manual
-                if (url.includes('gallery')) initGallery();
-                if (url.includes('harapanku')) initHarapanku();
-                if (url.includes('reasons')) initReasons();
-                if (url.includes('untuk_kamu')) initUntukKamu();
-
-                // 4. Munculkan kembali secara halus
+                // 3. PAKSA OPACITY KE 1 (Ini yang krusial!)
                 mainContent.style.opacity = '1';
 
-                // Tambahkan ini agar tombol 'Kembali' di halaman baru tidak mematikan musik
-                bindBackButtons();
-            }, 500);
+                // Jalankan script khusus menu jika ada
+                if (url.includes('gallery')) typeof initGallery === 'function' && initGallery();
+                if (url.includes('harapanku')) typeof initHarapanku === 'function' && initHarapanku();
+                // ... dst
+            }, 300);
         }
-    } catch (err) {
-        console.error("Gagal load menu, balik ke cara manual");
-        window.location.href = url; 
+    } catch (error) {
+        console.error("Gagal load menu:", error);
+        mainContent.style.opacity = '1'; // Tetap munculkan meski error
     }
 }
 
