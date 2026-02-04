@@ -1,11 +1,11 @@
 /**
- * Script Untuk Kamu - Versi Stabil
+ * Script Untuk Kamu - Versi Final Anti-Error
  */
 
 function initUntukKamu() {
     console.log("Memulai animasi Untuk Kamu...");
 
-    // 1. Ambil Nama & Siapkan Data
+    // 1. Ambil Nama & Siapkan Data (Gunakan contentData, bukan content)
     const nama = localStorage.getItem('namaUser') || "Sayangku";
     const contentData = {
         title: `${nama}`,
@@ -16,26 +16,16 @@ function initUntukKamu() {
         p5: `Happy Valentine, ${nama} 💖`,
     };
 
-    // 2. Bersihkan elemen teks sebelum mulai
-    const ids = ["typeTitle", "p1", "p2", "p3", "p4", "p5"];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = "";
-    });
-
-    // Sembunyikan tombol kembali dulu
-    const btnBack = document.getElementById("backBtn");
-    if (btnBack) btnBack.style.opacity = "0";
-
-    // 3. Fungsi Pengetik (Hanya Satu & Stabil)
+    // 2. Fungsi Pengetik (Hanya Satu)
     function typeWriter(text, elementId, speed) {
         return new Promise((resolve) => {
             let i = 0;
-            function type() {
-                const element = document.getElementById(elementId);
-                // Berhenti jika elemen hilang (user pindah halaman)
-                if (!element) return resolve();
+            const element = document.getElementById(elementId);
+            if (!element) return resolve();
+            
+            element.innerHTML = ""; // Bersihkan dulu
 
+            function type() {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
@@ -48,12 +38,10 @@ function initUntukKamu() {
         });
     }
 
-    // 4. Jalankan Urutan Animasi
+    // 3. Jalankan Urutan (startTyping)
     async function startTyping() {
-        // Cek elemen pertama, jika tidak ada berarti user sudah pindah halaman
-        if (!document.getElementById("typeTitle")) return;
-
         try {
+            // Pastikan menggunakan contentData sesuai definisi di atas
             await typeWriter(contentData.title, "typeTitle", 70);
             await typeWriter(contentData.p1, "p1", 40);
             await typeWriter(contentData.p2, "p2", 40);
@@ -61,20 +49,20 @@ function initUntukKamu() {
             await typeWriter(contentData.p4, "p4", 40);
             await typeWriter(contentData.p5, "p5", 80);
 
-            // Tampilkan tombol kembali setelah selesai
-            if (btnBack) {
-                btnBack.style.transition = "opacity 1s ease";
-                btnBack.style.opacity = "1";
+            const btn = document.getElementById("backBtn");
+            if (btn) {
+                btn.style.opacity = "1";
+                btn.style.transition = "opacity 1s ease";
             }
-        } catch (e) {
-            console.log("Animasi berhenti karena pindah halaman.");
+        } catch (err) {
+            console.error("Animasi terhenti:", err);
         }
     }
 
     startTyping();
 }
 
-// 5. Jalankan Fungsi
+// 4. Jalankan saat DOM siap
 if (document.readyState === "complete" || document.readyState === "interactive") {
     initUntukKamu();
 } else {
