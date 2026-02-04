@@ -1,4 +1,4 @@
-// --- 1. PROTEKSI SESSION (WAJIB DI ATAS) ---
+// --- 1. PROTEKSI SESSION ---
 if (localStorage.getItem('isLoggedIn') !== 'true') {
     window.location.href = "index.html";
 }
@@ -42,25 +42,24 @@ function createHeart() {
 setInterval(createHeart, 400);
 
 // --- 3. LOGIKA MUSIK KONSISTEN ---
-// MENGGUNAKAN 'var' agar tidak error "Identifier has already been declared"
-var audio = document.getElementById("mySong") || document.getElementById("globalAudio");
+// Ganti 'const' menjadi 'var' agar tidak error "already been declared"
+var myAudio = document.getElementById("mySong") || document.getElementById("globalAudio");
 
 function playConsistentMusic() {
-    if (!audio) return;
+    if (!myAudio) return;
 
     const savedTime = localStorage.getItem("musicTime");
     if (savedTime) {
-        audio.currentTime = parseFloat(savedTime);
+        myAudio.currentTime = parseFloat(savedTime);
     }
 
-    audio.play().catch(() => {
-        console.log("Klik di mana saja untuk memutar musik");
-        document.addEventListener('click', () => audio.play(), { once: true });
+    myAudio.play().catch(() => {
+        document.addEventListener('click', () => myAudio.play(), { once: true });
     });
 
     setInterval(() => {
-        if (!audio.paused) {
-            localStorage.setItem("musicTime", audio.currentTime);
+        if (!myAudio.paused) {
+            localStorage.setItem("musicTime", myAudio.currentTime);
         }
     }, 1000);
 }
@@ -74,7 +73,7 @@ async function bukaMenu(url) {
 
     try {
         const response = await fetch('./' + url); 
-        if (!response.ok) throw new Error("Gagal mengambil file: " + url);
+        if (!response.ok) throw new Error("Gagal ambil file");
         
         const html = await response.text();
         const parser = new DOMParser();
@@ -82,7 +81,7 @@ async function bukaMenu(url) {
         const newContent = doc.querySelector('main');
 
         if (newContent) {
-            // Tarik CSS agar style menu muncul
+            // Tarik CSS
             const links = doc.querySelectorAll('link[rel="stylesheet"]');
             links.forEach(link => {
                 const href = link.getAttribute('href');
@@ -101,28 +100,29 @@ async function bukaMenu(url) {
                 mainContent.style.opacity = '1';
                 mainContent.style.visibility = 'visible';
 
-                // Eksekusi Script Baru tanpa duplikasi script utama/musik
+                // Jalankan script tujuan tanpa duplikasi script utama/musik
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(oldScript => {
-                    const newScript = document.createElement("script");
                     if (oldScript.src) {
-                        // Filter agar script utama tidak diload ulang (penyebab tabrakan variabel)
+                        // Jangan load ulang script utama/musik agar tidak tabrakan
                         if (!oldScript.src.includes('script.js') && !oldScript.src.includes('musik.js')) {
+                            const newScript = document.createElement("script");
                             newScript.src = oldScript.src;
                             document.body.appendChild(newScript);
                         }
                     } else {
+                        const newScript = document.createElement("script");
                         newScript.textContent = oldScript.textContent;
                         document.body.appendChild(newScript);
                     }
                 });
 
-                // Jeda 200ms agar fungsi init terbaca setelah script masuk
+                // Tunggu script ter-load sebelum panggil fungsi
                 setTimeout(() => {
                     if (url.includes('untuk_kamu') && typeof initUntukKamu === 'function') initUntukKamu();
                     if (url.includes('gallery') && typeof initGallery === 'function') initGallery();
                     if (url.includes('bunga') && typeof initBunga === 'function') initBunga();
-                }, 200);
+                }, 300);
 
                 bindBackButtons();
             }, 300);
@@ -143,16 +143,14 @@ function bindBackButtons() {
     }
 }
 
-// --- 5. LOGOUT ---
+// --- 5. INITIALIZATION ---
 function logout() {
     localStorage.clear();
     window.location.href = "index.html";
 }
 
-// Inisialisasi Musik
 window.addEventListener("load", playConsistentMusic);
 
-// Tampilkan Nama User
 window.addEventListener("DOMContentLoaded", () => {
     const namaDisplay = document.getElementById('displayNama');
     if (namaDisplay) {
